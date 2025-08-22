@@ -1,14 +1,18 @@
-import { MilitaryRankInputDTOSanitizer } from "@application/sanitizers/military-rank";
+import { LoggerProtocol } from "@application/protocols";
+import { MilitaryRankInputDTOSanitizer } from "@application/sanitizers";
+import { createLoggerMock } from "@mocks/logger.mock";
 
 interface SutTypes {
   sut: MilitaryRankInputDTOSanitizer;
+  loggerMock: jest.Mocked<LoggerProtocol>;
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new MilitaryRankInputDTOSanitizer();
-
+  const loggerMock = createLoggerMock();
+  const sut = new MilitaryRankInputDTOSanitizer(loggerMock);
   return {
     sut,
+    loggerMock,
   };
 };
 
@@ -20,9 +24,9 @@ describe("MilitaryRankInputDTOSanitizer", () => {
   });
 
   describe("abbreviation sanitization", () => {
-    it("should trim and convert abbreviation to uppercase", () => {
+    it("should trim and convert abbreviation to uppercase and log input/output", () => {
       // ARRANGE
-      const { sut } = sutInstance;
+      const { sut, loggerMock } = sutInstance;
       const inputDto = { abbreviation: "  cel  ", order: 1 };
 
       // ACT
@@ -30,6 +34,14 @@ describe("MilitaryRankInputDTOSanitizer", () => {
 
       // ASSERT
       expect(result.abbreviation).toBe("cel");
+      expect(loggerMock.info).toHaveBeenCalledWith(
+        "Sanitizing MilitaryRankInputDTO",
+        { input: inputDto },
+      );
+      expect(loggerMock.info).toHaveBeenCalledWith(
+        "Sanitized MilitaryRankInputDTO",
+        { output: result },
+      );
     });
 
     it("should normalize multiple spaces to single space", () => {
