@@ -1,32 +1,41 @@
 import { MilitaryRankInputDTOSanitizerProtocol } from "@application/protocols";
+import type { LoggerProtocol } from "@application/protocols/logger.protocol";
 import type { MilitaryRankInputDTO } from "@domain/dtos";
 
 export class MilitaryRankInputDTOSanitizer
   implements MilitaryRankInputDTOSanitizerProtocol
 {
+  private readonly logger: LoggerProtocol;
+
+  constructor(logger: LoggerProtocol) {
+    this.logger = logger;
+  }
+
   private readonly sanitizeAbbreviation = (abbreviation: string): string => {
     if (!abbreviation || typeof abbreviation !== "string") return abbreviation;
 
     return abbreviation
-      .trim() // Remove espaços em branco nas bordas
-      .replace(/\s+/g, " ") // Normaliza espaços múltiplos para um único espaço
-      .replace(/['";\\]/g, "") // Remove caracteres SQL perigosos
-      .replace(/--/g, "") // Remove comentários SQL
-      .replace(/\/\*/g, "") // Remove início de comentário
-      .replace(/\*\//g, ""); // Remove fim de comentário
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/['";\\]/g, "")
+      .replace(/--/g, "")
+      .replace(/\/\*/g, "")
+      .replace(/\*\//g, "");
   };
 
   private readonly sanitizeOrder = (order: number): number => {
-    // Sanitização: converte string numérica para number se necessário
     return typeof order === "string" ? parseFloat(order) : order;
   };
 
   public readonly sanitize = (
     data: MilitaryRankInputDTO,
   ): MilitaryRankInputDTO => {
-    return {
+    this.logger.info("Sanitizing MilitaryRankInputDTO", { input: data });
+    const sanitized = {
       abbreviation: this.sanitizeAbbreviation(data.abbreviation),
       order: this.sanitizeOrder(data.order),
     };
+    this.logger.info("Sanitized MilitaryRankInputDTO", { output: sanitized });
+    return sanitized;
   };
 }
