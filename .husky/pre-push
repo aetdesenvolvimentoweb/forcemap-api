@@ -1,0 +1,2 @@
+echo "Executando testes automatizados e verificando cobertura mínima de 80%..."
+pnpm test:coverage
