@@ -3,18 +3,26 @@ import {
   InvalidParamError,
   MissingParamError,
 } from "@application/errors";
+import type { LoggerProtocol } from "@application/protocols/logger.protocol";
 import { MilitaryRankInputDTOValidatorProtocol } from "@application/protocols/validators";
 import { MilitaryRankInputDTO } from "@domain/dtos";
 import { MilitaryRankRepository } from "@domain/repositories";
 
 interface MilitaryRankInputDTOValidatorProps {
   militaryRankRepository: MilitaryRankRepository;
+  logger: LoggerProtocol;
 }
 
 export class MilitaryRankInputDTOValidator
   implements MilitaryRankInputDTOValidatorProtocol
 {
-  constructor(private readonly props: MilitaryRankInputDTOValidatorProps) {}
+  private readonly logger: LoggerProtocol;
+  private readonly props: MilitaryRankInputDTOValidatorProps;
+
+  constructor(props: MilitaryRankInputDTOValidatorProps) {
+    this.props = props;
+    this.logger = props.logger;
+  }
 
   private readonly validateAbbreviationPresence = (
     abbreviation: string,
@@ -112,8 +120,25 @@ export class MilitaryRankInputDTOValidator
     data: MilitaryRankInputDTO,
     idToIgnore?: string,
   ): Promise<void> => {
-    this.validateRequiredFields(data);
-    this.validateBusinessRules(data);
-    await this.validateUniqueness(data, idToIgnore);
+    this.logger.info("Validating MilitaryRankInputDTO", {
+      input: data,
+      idToIgnore,
+    });
+    try {
+      this.validateRequiredFields(data);
+      this.validateBusinessRules(data);
+      await this.validateUniqueness(data, idToIgnore);
+      this.logger.info("MilitaryRankInputDTO validated successfully", {
+        input: data,
+        idToIgnore,
+      });
+    } catch (error) {
+      this.logger.error("Validation error in MilitaryRankInputDTO", {
+        input: data,
+        idToIgnore,
+        error,
+      });
+      throw error;
+    }
   };
 }
