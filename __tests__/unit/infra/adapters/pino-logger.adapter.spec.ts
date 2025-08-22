@@ -42,4 +42,19 @@ describe("PinoLoggerAdapter", () => {
     adapter.info("no meta");
     expect(pinoMock.info).toHaveBeenCalledWith({}, "no meta");
   });
+
+  it("should use empty object for meta if not provided in warn", () => {
+    adapter.warn("no meta");
+    expect(pinoMock.warn).toHaveBeenCalledWith({}, "no meta");
+  });
+
+  it("should use empty object for meta if not provided in error", () => {
+    adapter.error("no meta");
+    expect(pinoMock.error).toHaveBeenCalledWith({}, "no meta");
+  });
+
+  it("should use empty object for meta if not provided in debug", () => {
+    adapter.debug("no meta");
+    expect(pinoMock.debug).toHaveBeenCalledWith({}, "no meta");
+  });
 });
