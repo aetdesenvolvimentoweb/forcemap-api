@@ -11,11 +11,10 @@ describe("PinoLoggerAdapter", () => {
       warn: jest.fn(),
       error: jest.fn(),
       debug: jest.fn(),
-    } as unknown as jest.Mocked<Logger>;
-    // Cria o adapter normalmente
+      // Adicione outros métodos se necessário
+    } as Partial<Logger> as jest.Mocked<Logger>;
     adapter = new PinoLoggerAdapter();
-    // Sobrescreve o logger interno para usar o mock
-    (adapter as unknown as { logger: jest.Mocked<Logger> }).logger = pinoMock;
+    (adapter as PinoLoggerAdapter).logger = pinoMock;
   });
 
   it("should call info with correct params", () => {

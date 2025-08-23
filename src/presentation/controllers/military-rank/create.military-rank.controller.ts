@@ -34,17 +34,17 @@ export class CreateMilitaryRankController implements ControllerProtocol {
       if (
         !request.body ||
         typeof request.body !== "object" ||
-        !("data" in request.body)
+        !("data" in request.body) ||
+        typeof request.body.data !== "object" ||
+        request.body.data === null
       ) {
-        logger.warn("Body da requisição vazio ou inválido");
+        logger.warn("Body da requisição vazio, inválido ou sem DTO válido");
         httpResponseFactory.badRequest(response, new EmptyRequestError());
         return;
       }
 
       // Tipagem correta do DTO
-      const { data } = request.body as {
-        data: MilitaryRankInputDTO;
-      };
+      const { data } = request.body as { data: MilitaryRankInputDTO };
       await createMilitaryRankService.create(data);
 
       logger.info("Posto/graduação criado com sucesso");

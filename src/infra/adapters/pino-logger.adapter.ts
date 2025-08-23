@@ -2,7 +2,7 @@ import { LoggerProtocol } from "@application/protocols";
 import pino from "pino";
 
 export class PinoLoggerAdapter implements LoggerProtocol {
-  private readonly logger: pino.Logger;
+  public logger: pino.Logger;
 
   constructor(options?: pino.LoggerOptions) {
     this.logger = pino(options);

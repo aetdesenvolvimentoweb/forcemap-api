@@ -32,14 +32,10 @@ describe("HttpResponseFactory", () => {
     expect(response.send).toHaveBeenCalledWith(null);
   });
 
-  it("should send badRequest with default status 422 if error.statusCode is undefined", () => {
-    const errorMock = {
-      message: "Erro sem status",
-      name: "AppError",
-      statusCode: undefined,
-    } as unknown as AppError;
+  it("should send badRequest with default status 400 if error.statusCode is undefined", () => {
+    const errorMock = new AppError("Erro sem status", undefined);
     factory.badRequest(response, errorMock);
-    expect(response.status).toHaveBeenCalledWith(422);
+    expect(response.status).toHaveBeenCalledWith(400);
     expect(response.json).toHaveBeenCalledWith({ error: "Erro sem status" });
   });
 });

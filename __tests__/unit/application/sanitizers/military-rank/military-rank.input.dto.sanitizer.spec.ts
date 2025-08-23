@@ -71,12 +71,10 @@ describe("MilitaryRankInputDTOSanitizer", () => {
     it("should preserve invalid input for validator to handle", () => {
       // ARRANGE
       const { sut } = sutInstance;
-      const inputDto = { abbreviation: null, order: 1 } as unknown as {
-        abbreviation: string;
-        order: number;
-      };
+      const inputDto = { abbreviation: null, order: 1 };
 
       // ACT
+      //@ts-expect-error testing invalid input
       const result = sut.sanitize(inputDto);
 
       // ASSERT
@@ -88,12 +86,10 @@ describe("MilitaryRankInputDTOSanitizer", () => {
     it("should convert string number to integer", () => {
       // ARRANGE
       const { sut } = sutInstance;
-      const inputDto = { abbreviation: "CEL", order: "5" } as unknown as {
-        abbreviation: string;
-        order: number;
-      };
+      const inputDto = { abbreviation: "CEL", order: "5" };
 
       // ACT
+      //@ts-expect-error testing invalid input
       const result = sut.sanitize(inputDto);
 
       // ASSERT
@@ -104,20 +100,16 @@ describe("MilitaryRankInputDTOSanitizer", () => {
     it("should preserve null and undefined", () => {
       // ARRANGE
       const { sut } = sutInstance;
-      const inputDtoNull = { abbreviation: "CEL", order: null } as unknown as {
-        abbreviation: string;
-        order: number;
-      };
+      const inputDtoNull = { abbreviation: "CEL", order: null };
       const inputDtoUndefined = {
         abbreviation: "CEL",
         order: undefined,
-      } as unknown as {
-        abbreviation: string;
-        order: number;
       };
 
       // ACT
+      //@ts-expect-error testing invalid input
       const resultNull = sut.sanitize(inputDtoNull);
+      //@ts-expect-error testing invalid input
       const resultUndefined = sut.sanitize(inputDtoUndefined);
 
       // ASSERT
