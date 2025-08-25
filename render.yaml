@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: forcemap-api
+    env: node
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    rootDir: ./dist
+    autoDeploy: true
