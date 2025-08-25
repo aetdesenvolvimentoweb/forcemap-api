@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2020",
     "module": "CommonJS",
+    "sourceMap": true,
+    "inlineSourceMap": false,
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
@@ -17,6 +19,10 @@
       "@main/*": ["src/main/*"],
       "@mocks/*": ["__mocks__/*"]
     }
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true
   },
   "include": ["src", "__tests__", "__mocks__"],
   "exclude": ["node_modules", "dist"]
