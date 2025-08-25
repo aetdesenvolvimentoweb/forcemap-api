@@ -1,18 +1,14 @@
-import express, { Request, Response, Router } from "express";
+import express from "express";
 
 const app = express();
-
-const route = Router();
-
 app.use(express.json());
 
-route.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Hello Force Map" });
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Hello World" });
 });
 
-app.use(route);
-
-const port = process.env.PORT || 3333;
-app.listen(port, () => console.log(`server running on port ${port}`));
+app.listen(3333, () => {
+  console.log("Server is running on http://localhost:3333");
+});
 
 export default app;
