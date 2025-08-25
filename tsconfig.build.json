@@ -10,7 +10,8 @@
       "@presentation/*": ["presentation/*"],
       "@infra/*": ["infra/*"],
       "@main/*": ["main/*"]
-    }
+    },
+    "types": ["node", "express", "pino"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "__tests__", "__mocks__"]

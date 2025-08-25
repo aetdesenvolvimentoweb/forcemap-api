@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "types": ["node", "express", "pino", "jest"],
     "paths": {
       "src": ["src/index.ts"],
       "@domain/*": ["src/domain/*"],
