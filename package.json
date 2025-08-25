@@ -16,7 +16,8 @@
     "test:e2e": "jest --config jest.e2e.config.ts",
     "test:coverage": "jest --coverage",
     "test:staged": "jest --onlyChanged",
-    "test:verbose": "jest --silent=false --verbose"
+    "test:verbose": "jest --silent=false --verbose",
+    "postinstall": "tscpaths -p tsconfig.build.json -s ./src -o ./dist"
   },
   "dependencies": {
     "@vercel/node": "^5.3.13",
