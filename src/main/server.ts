@@ -7,7 +7,7 @@ const route = Router();
 app.use(express.json());
 
 route.get("/", (req: Request, res: Response) => {
-  res.json({ message: "hello world with Typescript" });
+  res.json({ message: "Hello Force Map" });
 });
 
 app.use(route);

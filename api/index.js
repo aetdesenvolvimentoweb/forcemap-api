@@ -1,4 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // api/index.js
-import app from "dist/main/server.js";
-
-export default app;
+const app = require("../dist/main/server.js");
+module.exports = app;

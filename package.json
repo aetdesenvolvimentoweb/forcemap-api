@@ -19,6 +19,7 @@
     "test:verbose": "jest --silent=false --verbose"
   },
   "dependencies": {
+    "@vercel/node": "^5.3.13",
     "express": "^5.1.0",
     "pino": "^9.9.0"
   },
