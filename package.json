@@ -4,9 +4,9 @@
   "description": "Sistema de gerenciamento dos recursos operacionais disponíveis no Corpo de Bombeiros Militar do Estado de Goiás.",
   "main": "dist/main/index.js",
   "scripts": {
-    "build": "tsc --project tsconfig.build.json && tscpaths -p tsconfig.build.json -s ./src -o ./dist",
+    "build": "tsc --project tsconfig.build.json && tscpaths -p tsconfig.build.json -s . -o ./dist",
     "dev": "tsx src/main/server.ts",
-    "start": "node ./dist/main/server.js",
+    "start": "node ./dist/api/server.js",
     "format": "prettier --write .",
     "lint": "eslint --fix .",
     "prepare": "husky",

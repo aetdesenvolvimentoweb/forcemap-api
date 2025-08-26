@@ -2,16 +2,16 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "./src",
-    "baseUrl": "./src",
+    "rootDir": ".",
+    "baseUrl": ".",
     "paths": {
-      "@domain/*": ["domain/*"],
-      "@application/*": ["application/*"],
-      "@presentation/*": ["presentation/*"],
-      "@infra/*": ["infra/*"],
-      "@main/*": ["main/*"]
+      "@domain/*": ["./src/domain/*"],
+      "@application/*": ["./src/application/*"],
+      "@presentation/*": ["./src/presentation/*"],
+      "@infra/*": ["./src/infra/*"],
+      "@main/*": ["./src/main/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "api"],
   "exclude": ["node_modules", "__tests__", "__mocks__"]
 }

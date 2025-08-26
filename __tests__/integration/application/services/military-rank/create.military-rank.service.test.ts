@@ -3,7 +3,7 @@ import { MilitaryRankInputDTOSanitizer } from "@application/sanitizers";
 import { CreateMilitaryRankService } from "@application/services";
 import { MilitaryRankInputDTOValidator } from "@application/validators";
 import { MilitaryRankInputDTO } from "@domain/dtos";
-import { InMemoryMilitaryRankRepository } from "@infra/repositories/in-memory-military-rank.repository";
+import { InMemoryMilitaryRankRepository } from "@infra/repositories/in-memory/in-memory-military-rank.repository";
 import { createLoggerMock } from "@mocks/logger.mock";
 
 type SutTypes = {

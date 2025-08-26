@@ -1,7 +1,7 @@
 import { MilitaryRankInputDTOSanitizer } from "@application/sanitizers";
 import { CreateMilitaryRankService } from "@application/services";
 import { MilitaryRankInputDTOValidator } from "@application/validators";
-import { InMemoryMilitaryRankRepository } from "@infra/repositories/in-memory-military-rank.repository";
+import { InMemoryMilitaryRankRepository } from "@infra/repositories/in-memory/in-memory-military-rank.repository";
 import { httpResponseFactoryMock } from "@mocks/httpResponseFactory.mock";
 import { createLoggerMock } from "@mocks/logger.mock";
 import { responseMock } from "@mocks/response.mock";
