@@ -1,14 +1,6 @@
 {
-  "builds": [
-    {
-      "src": "api/server.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/server.ts"
-    }
-  ]
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "outputDirectory": "dist",
+  "framework": "express"
 }

@@ -5,8 +5,8 @@
   "main": "dist/main/index.js",
   "scripts": {
     "build": "tsc --project tsconfig.build.json && tscpaths -p tsconfig.build.json -s . -o ./dist",
-    "dev": "tsx api/server.ts",
-    "start": "node ./dist/api/server.js",
+    "dev": "tsx server.ts",
+    "start": "node ./dist/server.js",
     "format": "prettier --write .",
     "lint": "eslint --fix .",
     "prepare": "husky",
@@ -16,8 +16,7 @@
     "test:e2e": "jest --config jest.e2e.config.ts",
     "test:coverage": "jest --coverage",
     "test:staged": "jest --onlyChanged",
-    "test:verbose": "jest --silent=false --verbose",
-    "postinstall": "tscpaths -p tsconfig.build.json -s ./src -o ./dist"
+    "test:verbose": "jest --silent=false --verbose"
   },
   "dependencies": {
     "@vercel/node": "^5.3.13",
@@ -32,6 +31,7 @@
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
+    "dotenv": "^17.2.1",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",

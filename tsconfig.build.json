@@ -12,6 +12,6 @@
       "@main/*": ["./src/main/*"]
     }
   },
-  "include": ["src", "api"],
+  "include": ["src", "api", "server.ts", "src/types"],
   "exclude": ["node_modules", "__tests__", "__mocks__"]
 }

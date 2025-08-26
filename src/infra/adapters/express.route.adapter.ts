@@ -1,5 +1,5 @@
 // src/main/adapters/expressRouteAdapter.ts
-import type { ControllerProtocol } from "@presentation/protocols";
+import type { ControllerProtocol, HttpResponse } from "@presentation/protocols";
 import { Request, Response } from "express";
 
 export const expressRouteAdapter = (controller: ControllerProtocol) => {
@@ -11,6 +11,6 @@ export const expressRouteAdapter = (controller: ControllerProtocol) => {
       headers: req.headers,
     };
 
-    await controller.handle(httpRequest, res);
+    await controller.handle(httpRequest, res as HttpResponse);
   };
 };

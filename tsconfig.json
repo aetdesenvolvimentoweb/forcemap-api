@@ -25,6 +25,6 @@
     "verbose": false,
     "resolveFullPaths": true
   },
-  "include": ["src", "__tests__", "__mocks__", "api/server.ts"],
+  "include": ["src", "__tests__", "__mocks__", "server.ts", "src/types"],
   "exclude": ["node_modules", "dist"]
 }
