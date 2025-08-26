@@ -1,6 +1,6 @@
-import { MilitaryRankInputDTO } from "@domain/dtos/military-rank.dto";
-import { MilitaryRank } from "@domain/entities/military-rank.interface";
-import { MilitaryRankRepository } from "@domain/repositories/military-rank.repository.interface";
+import { MilitaryRankInputDTO } from "@domain/dtos";
+import { MilitaryRank } from "@domain/entities";
+import { MilitaryRankRepository } from "@domain/repositories";
 
 export class InMemoryMilitaryRankRepository implements MilitaryRankRepository {
   private items: MilitaryRank[] = [];
