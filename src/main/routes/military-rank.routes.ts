@@ -14,20 +14,21 @@ const militaryRankRoutes = new Hono();
 const { requireAuthWithRoles } = makeHonoAuthMiddleware();
 const logger = makeGlobalLogger();
 
-// Operações críticas - apenas ADMIN
+// Operações de gerenciamento (criar/editar/excluir) - apenas ADMIN
 militaryRankRoutes.post(
   "/",
   requireAuthWithRoles(["Admin"]),
   honoRouteAdapter(makeCreateMilitaryRankController(), logger),
 );
+// Operações de consulta - ADMIN, CHEFE e ACA (necessárias para cadastrar militares)
 militaryRankRoutes.get(
   "/",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeListAllMilitaryRankController(), logger),
 );
 militaryRankRoutes.get(
   "/:id",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeFindByIdMilitaryRankController(), logger),
 );
 militaryRankRoutes.delete(
