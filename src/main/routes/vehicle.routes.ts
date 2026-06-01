@@ -14,30 +14,30 @@ const vehicleRoutes = new Hono();
 const { requireAuthWithRoles } = makeHonoAuthMiddleware();
 const logger = makeGlobalLogger();
 
-// Operações críticas - apenas ADMIN
+// Operações de viaturas - ADMIN, CHEFE e ACA
 vehicleRoutes.post(
   "/",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeCreateVehicleController(), logger),
 );
 vehicleRoutes.get(
   "/",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeListAllVehicleController(), logger),
 );
 vehicleRoutes.get(
   "/:id",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeFindByIdVehicleController(), logger),
 );
 vehicleRoutes.delete(
   "/:id",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeDeleteVehicleController(), logger),
 );
 vehicleRoutes.put(
   "/:id",
-  requireAuthWithRoles(["Admin"]),
+  requireAuthWithRoles(["Admin", "Chefe", "ACA"]),
   honoRouteAdapter(makeUpdateVehicleController(), logger),
 );
 

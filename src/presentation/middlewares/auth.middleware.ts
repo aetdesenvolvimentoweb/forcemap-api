@@ -3,7 +3,7 @@ import { LoggerProtocol } from "../../application/protocols";
 import { TokenValidator } from "../../application/validators";
 import { SessionRepository } from "../../domain/repositories";
 import { HttpRequest, HttpResponse } from "../protocols";
-import { badRequest } from "../utils";
+import { badRequest, forbidden } from "../utils";
 
 interface AuthMiddlewareProps {
   tokenValidator: TokenValidator;
@@ -98,7 +98,7 @@ export class AuthMiddleware {
           userRole: request.user.role,
           requiredRoles: allowedRoles,
         });
-        return badRequest(new UnauthorizedError("Acesso negado"));
+        return forbidden("Acesso negado");
       }
 
       logger.debug?.("Usuário autorizado", {
