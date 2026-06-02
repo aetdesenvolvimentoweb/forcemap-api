@@ -2,15 +2,15 @@ import {
   ACARepository,
   MilitaryRepository,
 } from "../../../domain/repositories";
-import { ACARepositoryInMemory } from "../../../infra/repositories";
+import { ACARepositoryD1 } from "../../../infra/repositories";
 
-let instance: ACARepositoryInMemory | null = null;
+let instance: ACARepositoryD1 | null = null;
 
 export const makeACARepository = (
   militaryRepository: MilitaryRepository,
 ): ACARepository => {
   if (!instance) {
-    instance = new ACARepositoryInMemory(militaryRepository);
+    instance = new ACARepositoryD1(militaryRepository);
   }
   return instance;
 };

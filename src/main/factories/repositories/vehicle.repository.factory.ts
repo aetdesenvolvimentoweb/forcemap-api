@@ -1,11 +1,11 @@
 import { VehicleRepository } from "../../../domain/repositories";
-import { VehicleRepositoryInMemory } from "../../../infra/repositories";
+import { VehicleRepositoryD1 } from "../../../infra/repositories";
 
-let instance: VehicleRepositoryInMemory | null = null;
+let instance: VehicleRepositoryD1 | null = null;
 
 export const makeVehicleRepository = (): VehicleRepository => {
   if (!instance) {
-    instance = new VehicleRepositoryInMemory();
+    instance = new VehicleRepositoryD1();
   }
   return instance;
 };

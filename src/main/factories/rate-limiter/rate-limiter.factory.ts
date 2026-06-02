@@ -1,6 +1,6 @@
 import { RateLimiterProtocol } from "../../../application/protocols";
-import { InMemoryRateLimiterAdapter } from "../../../infra/adapters";
+import { D1RateLimiterAdapter } from "../../../infra/adapters";
 
 export const makeRateLimiter = (): RateLimiterProtocol => {
-  return new InMemoryRateLimiterAdapter();
+  return new D1RateLimiterAdapter();
 };

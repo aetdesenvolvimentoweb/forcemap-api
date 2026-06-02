@@ -1,4 +1,6 @@
-import { UserReadRepository, UserWriteRepository } from "./user";
+import { UserReadRepository } from "./user-read.repository";
+import { UserWriteRepository } from "./user-write.repository";
 
 export interface UserRepository
-  extends UserReadRepository, UserWriteRepository {}
+  extends UserReadRepository,
+    UserWriteRepository {}

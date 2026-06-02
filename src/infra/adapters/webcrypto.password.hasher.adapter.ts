@@ -1,6 +1,6 @@
 import { PasswordHasherProtocol } from "../../application/protocols";
 
-const webcrypto = globalThis.crypto;
+const webcrypto = crypto;
 
 export class WebCryptoPasswordHasherAdapter implements PasswordHasherProtocol {
   constructor(private readonly iterations: number = 100000) {}
