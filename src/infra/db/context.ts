@@ -9,7 +9,7 @@ const storage = new AsyncLocalStorage<Database>();
 
 /**
  * Opens a request-scoped database context. The D1 binding only exists inside a
- * Worker request (`c.env.DB`), so this must wrap the request handling. Every
+ * Worker request (`c.env.forcemap`), so this must wrap the request handling. Every
  * repository created at module load resolves its `db` lazily via {@link getDb}.
  */
 export const runWithDb = <T>(d1: D1Database, fn: () => T): T => {

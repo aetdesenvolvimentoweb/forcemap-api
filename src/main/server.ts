@@ -19,7 +19,7 @@ const seedMiddleware = makeHonoSeedMiddleware();
 // Middleware de banco - abre o contexto request-scoped do D1 (deve rodar antes
 // de qualquer middleware/handler que acesse repositórios, incluindo o seed)
 app.use("*", async (c, next) => {
-  return runWithDb((c.env as Env).DB, () => next());
+  return runWithDb((c.env as Env).forcemap, () => next());
 });
 
 // Middleware de seed - inicializa banco de dados se necessário
