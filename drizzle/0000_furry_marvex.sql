@@ -49,8 +49,8 @@ CREATE TABLE `officer` (
 --> statement-breakpoint
 CREATE TABLE `rate_limit` (
 	`key` text PRIMARY KEY NOT NULL,
-	`hits` integer DEFAULT 0 NOT NULL,
-	`expires_at` integer NOT NULL
+	`attempts` text DEFAULT '[]' NOT NULL,
+	`blocked_until` integer
 );
 --> statement-breakpoint
 CREATE TABLE `session` (

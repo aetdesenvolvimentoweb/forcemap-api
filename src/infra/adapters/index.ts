@@ -1,4 +1,5 @@
 export * from "./cloudflare-worker-jwt.handler.adapter";
+export * from "./d1.rate-limiter.adapter";
 export * from "./hono.route.adapter";
 export * from "./in-memory.rate-limiter.adapter";
 export * from "./log-level.logger.adapter";

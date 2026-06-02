@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "08af0bd4-4880-414f-8c48-f38247d97dc8",
+  "id": "41c051cc-9395-42af-b861-1904f1b9090b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "aca": {
@@ -335,19 +335,19 @@
           "notNull": true,
           "autoincrement": false
         },
-        "hits": {
-          "name": "hits",
-          "type": "integer",
+        "attempts": {
+          "name": "attempts",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": 0
+          "default": "'[]'"
         },
-        "expires_at": {
-          "name": "expires_at",
+        "blocked_until": {
+          "name": "blocked_until",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

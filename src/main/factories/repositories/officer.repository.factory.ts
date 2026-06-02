@@ -2,15 +2,15 @@ import {
   MilitaryRepository,
   OfficerRepository,
 } from "../../../domain/repositories";
-import { OfficerRepositoryInMemory } from "../../../infra/repositories";
+import { OfficerRepositoryD1 } from "../../../infra/repositories";
 
-let instance: OfficerRepositoryInMemory | null = null;
+let instance: OfficerRepositoryD1 | null = null;
 
 export const makeOfficerRepository = (
   militaryRepository: MilitaryRepository,
 ): OfficerRepository => {
   if (!instance) {
-    instance = new OfficerRepositoryInMemory(militaryRepository);
+    instance = new OfficerRepositoryD1(militaryRepository);
   }
   return instance;
 };

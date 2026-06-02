@@ -90,6 +90,10 @@ export class DatabaseSeed {
 
   private async seedMilitaries(militaries: MilitaryInputDTO[]): Promise<void> {
     for (const military of militaries) {
+      const exists = await this.militaryRepository.findByRg(military.rg);
+      if (exists) {
+        continue;
+      }
       await this.militaryRepository.create({
         name: military.name,
         rg: military.rg,
@@ -100,6 +104,12 @@ export class DatabaseSeed {
 
   private async seedUsers(users: UserInputDTO[]): Promise<void> {
     for (const user of users) {
+      const exists = await this.userRepository.findByMilitaryId(
+        user.militaryId,
+      );
+      if (exists) {
+        continue;
+      }
       await this.userRepository.create({
         militaryId: user.militaryId,
         role: user.role,
