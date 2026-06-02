@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 
 import { securityHeadersDev, securityHeadersProd } from "../infra/adapters";
+import { runWithDb } from "../infra/db";
 import {
   makeHonoCorsMiddleware,
   makeHonoInternalSecretMiddleware,
@@ -14,6 +15,12 @@ const app = new Hono();
 // Middlewares compostos via factories (Main)
 const securityLoggingMiddleware = makeHonoSecurityLoggingMiddleware();
 const seedMiddleware = makeHonoSeedMiddleware();
+
+// Middleware de banco - abre o contexto request-scoped do D1 (deve rodar antes
+// de qualquer middleware/handler que acesse repositórios, incluindo o seed)
+app.use("*", async (c, next) => {
+  return runWithDb((c.env as Env).DB, () => next());
+});
 
 // Middleware de seed - inicializa banco de dados se necessário
 app.use("*", seedMiddleware);

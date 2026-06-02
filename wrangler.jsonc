@@ -3,6 +3,7 @@
   "name": "forcemap",
   "main": "src/index.ts",
   "compatibility_date": "2026-04-14",
+  "compatibility_flags": ["nodejs_compat"],
   "dev": {
     "port": 3333,
   },
@@ -30,13 +31,16 @@
   //     "bucket_name": "my-bucket"
   //   }
   // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "forcemap",
+      // Placeholder: rode `wrangler d1 create forcemap` e cole o id real aqui.
+      // Para dev local (`wrangler dev`) o id não precisa ser válido.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "drizzle",
+    },
+  ],
   // "ai": {
   //   "binding": "AI"
   // },

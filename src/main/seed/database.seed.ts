@@ -77,6 +77,13 @@ export class DatabaseSeed {
     ranks: MilitaryRankInputDTO[],
   ): Promise<void> {
     for (const rank of ranks) {
+      const exists =
+        (await this.militaryRankRepository.findByAbbreviation(
+          rank.abbreviation,
+        )) ?? (await this.militaryRankRepository.findByOrder(rank.order));
+      if (exists) {
+        continue;
+      }
       await this.militaryRankRepository.create(rank);
     }
   }

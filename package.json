@@ -5,15 +5,21 @@
     "dev": "BUN_ENV=development wrangler dev",
     "start": "BUN_ENV=production bun run src/start.ts",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply forcemap --local",
+    "db:migrate:remote": "wrangler d1 migrations apply forcemap --remote",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@tsndr/cloudflare-worker-jwt": "^3.2.1",
+    "drizzle-orm": "^0.45.2",
     "hono": "^4.12.15",
     "loglevel": "^1.9.2"
   },
   "devDependencies": {
     "@types/bun": "^1.3.13",
+    "drizzle-kit": "^0.31.10",
     "wrangler": "^4.85.0"
   }
 }
