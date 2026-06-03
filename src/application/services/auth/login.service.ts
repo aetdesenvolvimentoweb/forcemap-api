@@ -13,6 +13,14 @@ import {
 import { RateLimitingService } from "./rate-limiting.service";
 import { SessionManagementService } from "./session-management.service";
 
+/**
+ * Hash dummy (formato `iterations:salt:hash`) usado para executar um
+ * `compare()` quando o usuário não existe, equalizando o tempo de resposta e
+ * mitigando enumeração de usuário por timing. As iterações casam com o custo
+ * padrão do hasher; o valor nunca confere com nenhuma senha real.
+ */
+const DUMMY_HASH = `600000:${btoa("\0".repeat(16))}:${btoa("\0".repeat(32))}`;
+
 interface LoginServiceDependencies {
   userRepository: UserRepository;
   militaryRepository: MilitaryRepository;
@@ -118,6 +126,9 @@ export class LoginService {
 
     const military = await militaryRepository.findByRg(sanitizedCredentials.rg);
     if (!military) {
+      // Compara contra um hash dummy para equalizar o tempo de resposta e
+      // mitigar enumeração de usuário por timing (RG válido vs. inválido).
+      await passwordHasher.compare(sanitizedCredentials.password, DUMMY_HASH);
       return this.handleAuthenticationFailure(rateLimitKeys, {
         identifier: `RG:${sanitizedCredentials.rg}`,
         reason: "RG não encontrado",
@@ -127,6 +138,7 @@ export class LoginService {
 
     const user = await userRepository.findByMilitaryIdWithPassword(military.id);
     if (!user) {
+      await passwordHasher.compare(sanitizedCredentials.password, DUMMY_HASH);
       return this.handleAuthenticationFailure(rateLimitKeys, {
         identifier: `RG:${sanitizedCredentials.rg}`,
         reason: "Usuário não encontrado para o militar",

@@ -6,6 +6,7 @@ import type {
   HttpRequest,
   HttpResponse,
 } from "../../presentation/protocols";
+import { getClientIp } from "./get-client-ip";
 
 export const honoRouteAdapter = (
   controller: ControllerProtocol,
@@ -19,13 +20,7 @@ export const honoRouteAdapter = (
         params: c.req.param(),
         query: c.req.query(),
         headers: c.req.header(),
-        ip:
-          c.req.header("CF-Connecting-IP") ||
-          c.req.header("X-Forwarded-For") ||
-          c.req.header("X-Real-IP") ||
-          c.req.header("x-forwarded-for") ||
-          c.req.header("x-real-ip") ||
-          undefined,
+        ip: getClientIp(c),
         //eslint-disable-next-line @typescript-eslint/no-explicit-any
         user: (c.req as any).user,
       };

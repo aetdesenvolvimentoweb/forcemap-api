@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 
 import { securityHeadersDev, securityHeadersProd } from "../infra/adapters";
+import { runWithEnv } from "../infra/config";
 import { runWithDb } from "../infra/db";
 import {
   makeHonoCorsMiddleware,
@@ -16,10 +17,15 @@ const app = new Hono();
 const securityLoggingMiddleware = makeHonoSecurityLoggingMiddleware();
 const seedMiddleware = makeHonoSeedMiddleware();
 
-// Middleware de banco - abre o contexto request-scoped do D1 (deve rodar antes
-// de qualquer middleware/handler que acesse repositórios, incluindo o seed)
+// Middleware de banco/ambiente - abre os contextos request-scoped do D1 e das
+// variáveis/secrets (deve rodar antes de qualquer middleware/handler que acesse
+// repositórios ou segredos, incluindo o seed). No Workers, vars e secrets só
+// existem no binding `c.env` da request — nunca em `globalThis`.
 app.use("*", async (c, next) => {
-  return runWithDb((c.env as Env).forcemap, () => next());
+  const env = (c.env as Record<string, string | undefined>) ?? {};
+  return runWithEnv(env, () =>
+    runWithDb((c.env as Env).forcemap, () => next()),
+  );
 });
 
 // Middleware de seed - inicializa banco de dados se necessário

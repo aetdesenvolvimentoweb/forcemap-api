@@ -1,0 +1,32 @@
+# Modelo de secrets para desenvolvimento. Copie para `.dev.vars` e preencha.
+# `.dev.vars` é git-ignored; este `.example` é versionado como documentação.
+#
+# Em produção, configure cada um via `wrangler secret put <NOME>` ou pelo
+# Dashboard do Cloudflare. NÃO use os valores de exemplo em produção.
+
+# Define o modo de execução. Em "production" o tamanho mínimo dos secrets JWT
+# (>= 32 chars) é validado.
+BUN_ENV=development
+
+# JWT — OBRIGATÓRIOS. A aplicação NÃO tem fallback: sem estes secrets, as
+# operações de token falham com ConfigurationError.
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+JWT_ACCESS_EXPIRY=15m
+JWT_REFRESH_EXPIRY=7d
+
+# Senha do administrador inicial criado pelo seed. Se ausente, o admin NÃO é
+# criado (evita credencial padrão conhecida).
+SEED_ADMIN_PASSWORD=
+
+# Segredo para o bypass interno de CORS via header X-Internal-Secret.
+API_SECRET=
+
+# CORS Configuration
+# Development CORS Settings
+# Domínios permitidos em desenvolvimento (separados por vírgula)
+CORS_ALLOWED_ORIGINS_DEV=
+# Permite cookies/credenciais em desenvolvimento (true/false)
+CORS_ALLOW_CREDENTIALS_DEV=
+# Tempo de cache para preflight em desenvolvimento (segundos)
+CORS_MAX_AGE_DEV=

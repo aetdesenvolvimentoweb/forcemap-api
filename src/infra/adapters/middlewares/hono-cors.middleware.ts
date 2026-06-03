@@ -1,6 +1,7 @@
 import type { Context, Next } from "hono";
 
 import { LoggerProtocol } from "../../../application/protocols";
+import { getClientIp } from "../get-client-ip";
 
 /**
  * Configurações para CORS (Cross-Origin Resource Sharing)
@@ -218,11 +219,7 @@ export const cors = (config: CorsConfig = {}, logger: LoggerProtocol) => {
 
     const origin = c.req.header("Origin") ?? undefined;
     const requestMethod = c.req.method.toUpperCase();
-    const ip =
-      c.req.header("CF-Connecting-IP") ||
-      c.req.header("X-Forwarded-For") ||
-      c.req.header("X-Real-IP") ||
-      undefined;
+    const ip = getClientIp(c);
 
     // Verifica se a origem é permitida
     let response: Response | undefined;

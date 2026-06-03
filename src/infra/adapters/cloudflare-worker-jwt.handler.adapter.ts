@@ -5,54 +5,48 @@ import { TokenHandlerProtocol } from "../../application/protocols";
 import { Payload, RefreshTokenPayload } from "../../domain/entities";
 import { ConfigurationError } from "../errors";
 
-interface CloudflareWorkerJwtHandlerAdapterConfig {
-  accessTokenSecret: string;
-  refreshTokenSecret: string;
+const JWT_ALGORITHM = "HS256" as const;
+
+/**
+ * Configuração resolvida por request. Os secrets NÃO podem ser capturados no
+ * momento da construção (módulo carregado fora de uma request), por isso o
+ * adapter recebe um provedor avaliado preguiçosamente a cada operação.
+ */
+export interface JwtHandlerConfig {
+  accessTokenSecret?: string;
+  refreshTokenSecret?: string;
   accessTokenExpiry?: string;
   refreshTokenExpiry?: string;
+  isProduction?: boolean;
 }
 
 export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
-  private readonly accessTokenSecret: string;
-  private readonly refreshTokenSecret: string;
-  private readonly accessTokenExpiry: number;
-  private readonly refreshTokenExpiry: number;
+  constructor(private readonly getConfig: () => JwtHandlerConfig) {}
 
-  constructor(config: CloudflareWorkerJwtHandlerAdapterConfig) {
-    const {
-      accessTokenSecret,
-      refreshTokenSecret,
-      accessTokenExpiry,
-      refreshTokenExpiry,
-    } = config;
-
-    // Validação obrigatória de secrets
-    if (!accessTokenSecret || !refreshTokenSecret) {
+  private resolveAccessSecret(): string {
+    const { accessTokenSecret, isProduction } = this.getConfig();
+    if (!accessTokenSecret) {
+      throw new ConfigurationError("JWT_ACCESS_SECRET deve ser configurado");
+    }
+    if (isProduction && accessTokenSecret.length < 32) {
       throw new ConfigurationError(
-        "JWT_ACCESS_SECRET e JWT_REFRESH_SECRET devem ser configurados",
+        "JWT_ACCESS_SECRET deve ter no mínimo 32 caracteres em produção",
       );
     }
+    return accessTokenSecret;
+  }
 
-    // Validação de tamanho mínimo em produção
-    const nodeEnv = (globalThis as any).process?.env?.BUN_ENV || "development";
-    if (nodeEnv === "production") {
-      if (accessTokenSecret.length < 32) {
-        throw new ConfigurationError(
-          "JWT_ACCESS_SECRET deve ter no mínimo 32 caracteres em produção",
-        );
-      }
-
-      if (refreshTokenSecret.length < 32) {
-        throw new ConfigurationError(
-          "JWT_REFRESH_SECRET deve ter no mínimo 32 caracteres em produção",
-        );
-      }
+  private resolveRefreshSecret(): string {
+    const { refreshTokenSecret, isProduction } = this.getConfig();
+    if (!refreshTokenSecret) {
+      throw new ConfigurationError("JWT_REFRESH_SECRET deve ser configurado");
     }
-
-    this.accessTokenSecret = accessTokenSecret;
-    this.refreshTokenSecret = refreshTokenSecret;
-    this.accessTokenExpiry = this.parseExpiry(accessTokenExpiry || "15m");
-    this.refreshTokenExpiry = this.parseExpiry(refreshTokenExpiry || "7d");
+    if (isProduction && refreshTokenSecret.length < 32) {
+      throw new ConfigurationError(
+        "JWT_REFRESH_SECRET deve ter no mínimo 32 caracteres em produção",
+      );
+    }
+    return refreshTokenSecret;
   }
 
   private parseExpiry(expiry: string): number {
@@ -79,16 +73,18 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
   public readonly generateAccessToken = async (
     payload: Omit<Payload, "iat" | "exp">,
   ): Promise<string> => {
+    const secret = this.resolveAccessSecret();
+    const expiry = this.parseExpiry(this.getConfig().accessTokenExpiry || "15m");
     try {
       const now = Math.floor(Date.now() / 1000);
       const payloadWithExp = {
         ...payload,
         iat: now,
-        exp: now + this.accessTokenExpiry,
+        exp: now + expiry,
         iss: "forcemap-api",
         aud: "forcemap-client",
       };
-      return await sign(payloadWithExp, this.accessTokenSecret);
+      return await sign(payloadWithExp, secret, { algorithm: JWT_ALGORITHM });
     } catch {
       throw new InvalidParamError("Payload do token", "inválido para geração");
     }
@@ -97,16 +93,18 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
   public readonly generateRefreshToken = async (
     payload: Omit<RefreshTokenPayload, "iat" | "exp">,
   ): Promise<string> => {
+    const secret = this.resolveRefreshSecret();
+    const expiry = this.parseExpiry(this.getConfig().refreshTokenExpiry || "7d");
     try {
       const now = Math.floor(Date.now() / 1000);
       const payloadWithExp = {
         ...payload,
         iat: now,
-        exp: now + this.refreshTokenExpiry,
+        exp: now + expiry,
         iss: "forcemap-api",
         aud: "forcemap-client",
       };
-      return await sign(payloadWithExp, this.refreshTokenSecret);
+      return await sign(payloadWithExp, secret, { algorithm: JWT_ALGORITHM });
     } catch {
       throw new InvalidParamError(
         "Payload do refresh token",
@@ -123,13 +121,16 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
         throw new UnauthorizedError("Token de acesso obrigatório");
       }
 
-      const isValid = await verify(token, this.accessTokenSecret);
+      const result = await verify<Payload>(token, this.resolveAccessSecret(), {
+        algorithm: JWT_ALGORITHM,
+        throwError: true,
+      });
 
-      if (!isValid) {
+      if (!result) {
         throw new UnauthorizedError("Token de acesso inválido");
       }
 
-      const decoded = JSON.parse(atob(token.split(".")[1])) as Payload;
+      const decoded = result.payload as Payload;
 
       if (
         !decoded.userId ||
@@ -144,7 +145,11 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
 
       return decoded;
     } catch (error) {
-      if (error instanceof Error && error.message.includes("expired")) {
+      if (error instanceof ConfigurationError) {
+        throw error;
+      }
+
+      if (error instanceof Error && /expired/i.test(error.message)) {
         throw new UnauthorizedError("Token de acesso expirado");
       }
 
@@ -164,15 +169,17 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
         throw new UnauthorizedError("Refresh token obrigatório");
       }
 
-      const isValid = await verify(token, this.refreshTokenSecret);
+      const result = await verify<RefreshTokenPayload>(
+        token,
+        this.resolveRefreshSecret(),
+        { algorithm: JWT_ALGORITHM, throwError: true },
+      );
 
-      if (!isValid) {
+      if (!result) {
         throw new UnauthorizedError("Refresh token inválido");
       }
 
-      const decoded = JSON.parse(
-        atob(token.split(".")[1]),
-      ) as RefreshTokenPayload;
+      const decoded = result.payload as RefreshTokenPayload;
 
       if (
         !decoded.userId ||
@@ -185,7 +192,11 @@ export class CloudflareWorkerJwtHandlerAdapter implements TokenHandlerProtocol {
 
       return decoded;
     } catch (error) {
-      if (error instanceof Error && error.message.includes("expired")) {
+      if (error instanceof ConfigurationError) {
+        throw error;
+      }
+
+      if (error instanceof Error && /expired/i.test(error.message)) {
         throw new UnauthorizedError("Refresh token expirado");
       }
 

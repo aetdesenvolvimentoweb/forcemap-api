@@ -1,22 +1,22 @@
 import { TokenHandlerProtocol } from "../../../application/protocols";
 import { CloudflareWorkerJwtHandlerAdapter } from "../../../infra/adapters";
+import { getEnv } from "../../../infra/config";
 
+/**
+ * Os secrets vêm do binding `c.env` da request (Workers), exposto pelo contexto
+ * request-scoped {@link getEnv}. A configuração é resolvida preguiçosamente a
+ * cada operação de token — não há fallback hardcoded: se o secret não estiver
+ * configurado, o adapter lança `ConfigurationError` (falha dura).
+ */
 export const makeTokenHandler = (): TokenHandlerProtocol => {
-  // Em desenvolvimento, usar valores padrão
-  // Em produção, essas variáveis devem ser configuradas via wrangler secrets
-  const accessSecret =
-    (globalThis as any).JWT_ACCESS_SECRET ||
-    "dev-access-secret-key-at-least-32-chars-long";
-  const refreshSecret =
-    (globalThis as any).JWT_REFRESH_SECRET ||
-    "dev-refresh-secret-key-at-least-32-chars-long";
-  const accessExpiry = (globalThis as any).JWT_ACCESS_EXPIRY || "15m";
-  const refreshExpiry = (globalThis as any).JWT_REFRESH_EXPIRY || "7d";
-
-  return new CloudflareWorkerJwtHandlerAdapter({
-    accessTokenSecret: accessSecret,
-    refreshTokenSecret: refreshSecret,
-    accessTokenExpiry: accessExpiry,
-    refreshTokenExpiry: refreshExpiry,
+  return new CloudflareWorkerJwtHandlerAdapter(() => {
+    const env = getEnv();
+    return {
+      accessTokenSecret: env.JWT_ACCESS_SECRET,
+      refreshTokenSecret: env.JWT_REFRESH_SECRET,
+      accessTokenExpiry: env.JWT_ACCESS_EXPIRY || "15m",
+      refreshTokenExpiry: env.JWT_REFRESH_EXPIRY || "7d",
+      isProduction: env.BUN_ENV === "production",
+    };
   });
 };

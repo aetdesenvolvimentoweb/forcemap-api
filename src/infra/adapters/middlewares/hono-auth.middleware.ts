@@ -1,5 +1,6 @@
 import type { Context, Next } from "hono";
 import { AuthMiddleware } from "../../../presentation/middlewares";
+import { getClientIp } from "../get-client-ip";
 
 interface AuthHttpRequest {
   body?: unknown;
@@ -20,13 +21,7 @@ const buildAuthHttpRequest = (c: Context): AuthHttpRequest => ({
   params: c.req.param(),
   query: c.req.query(),
   headers: c.req.header(),
-  ip:
-    c.req.header("CF-Connecting-IP") ||
-    c.req.header("X-Forwarded-For") ||
-    c.req.header("X-Real-IP") ||
-    c.req.header("x-forwarded-for") ||
-    c.req.header("x-real-ip") ||
-    undefined,
+  ip: getClientIp(c),
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: (c.req as any).user,
 });

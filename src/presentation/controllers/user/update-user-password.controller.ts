@@ -20,9 +20,9 @@ export class UpdateUserPasswordController extends BaseController {
   ): Promise<HttpResponse> {
     const { updateUserPasswordService } = this.props;
 
+    // NÃO logar o body: contém currentPassword/newPassword em texto puro.
     this.logger.info("Recebida requisição para atualizar senha do usuário", {
       params: request.params,
-      body: request.body,
     });
 
     const id = this.validateRequiredParam(request, "id");

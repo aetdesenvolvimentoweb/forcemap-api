@@ -13,6 +13,9 @@ import {
   MilitaryRepository,
   UserRepository,
 } from "../../domain/repositories";
+import { getEnv } from "../../infra/config";
+
+const SEED_ADMIN_RG = 9999;
 
 export class DatabaseSeed {
   private static hasSeeded = false;
@@ -47,19 +50,41 @@ export class DatabaseSeed {
       { abbreviation: "Sd 2ª Classe", order: 14 },
     ]);
 
+    await this.seedAdminUser();
+
+    DatabaseSeed.hasSeeded = true;
+    this.logger.info("Database seeded successfully");
+  }
+
+  /**
+   * Cria o usuário administrador inicial. A senha NUNCA é hardcoded: vem do
+   * secret `SEED_ADMIN_PASSWORD`. Sem ele, o admin não é criado (evita
+   * credencial padrão conhecida) e um aviso é registrado para o operador.
+   */
+  private async seedAdminUser(): Promise<void> {
+    const adminPassword = getEnv().SEED_ADMIN_PASSWORD;
+
+    if (!adminPassword) {
+      this.logger.warn(
+        "SEED_ADMIN_PASSWORD não configurado — usuário admin não foi criado. " +
+          "Defina o secret e reinicie para provisionar o administrador inicial.",
+      );
+      return;
+    }
+
     const militaryRankAdmin =
       await this.militaryRankRepository.findByAbbreviation("Cel");
 
     await this.seedMilitaries([
       {
         militaryRankId: militaryRankAdmin!.id,
-        rg: 9999,
+        rg: SEED_ADMIN_RG,
         name: "Administrador",
       },
     ]);
 
-    const admin = await this.militaryRepository.findByRg(9999);
-    const hashedPassword = await this.passwordHasher.hash("F0rceAdmin!");
+    const admin = await this.militaryRepository.findByRg(SEED_ADMIN_RG);
+    const hashedPassword = await this.passwordHasher.hash(adminPassword);
 
     await this.seedUsers([
       {
@@ -68,9 +93,6 @@ export class DatabaseSeed {
         password: hashedPassword,
       },
     ]);
-
-    DatabaseSeed.hasSeeded = true;
-    this.logger.info("Database seeded successfully");
   }
 
   private async seedMilitaryRanks(
