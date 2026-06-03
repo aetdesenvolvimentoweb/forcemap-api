@@ -7,3 +7,7 @@ export * from "./session.repository.d1";
 export * from "./telephonist.repository.d1";
 export * from "./user.repository.d1";
 export * from "./vehicle.repository.d1";
+
+export * from "./service-swap.repository.d1";
+
+export * from "./settings.repository.d1";

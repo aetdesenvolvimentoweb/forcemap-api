@@ -8,3 +8,7 @@ export * from "./session.schema";
 export * from "./telephonist.schema";
 export * from "./user.schema";
 export * from "./vehicle.schema";
+
+export * from "./service-swap.schema";
+
+export * from "./settings.schema";
