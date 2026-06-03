@@ -47,7 +47,8 @@ export class CreateUserController extends BaseController {
         return created();
       },
       "Erro ao criar usuário",
-      body,
+      // NÃO passar o body cru: contém password em texto puro (logado no erro).
+      { militaryId: body.militaryId, role: body.role },
     );
 
     return result as HttpResponse;

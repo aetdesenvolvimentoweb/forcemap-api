@@ -79,6 +79,7 @@ export interface SecurityLogger {
 }
 
 import { LoggerProtocol } from "../../../application/protocols";
+import { getClientIp } from "../get-client-ip";
 
 /**
  * Implementação do logger de segurança usando LogLevel
@@ -202,11 +203,8 @@ export class LogLevelSecurityLogger implements SecurityLogger {
  * Extrai informações da requisição para logging de segurança
  */
 const extractRequestInfo = (c: Context) => ({
-  ipAddress:
-    c.req.header("CF-Connecting-IP") ||
-    c.req.header("X-Forwarded-For") ||
-    c.req.header("X-Real-IP") ||
-    "unknown",
+  // Apenas CF-Connecting-IP é confiável no Workers (ver getClientIp).
+  ipAddress: getClientIp(c) ?? "unknown",
   userAgent: c.req.header("User-Agent") || "unknown",
   endpoint: c.req.path,
   method: c.req.method,
