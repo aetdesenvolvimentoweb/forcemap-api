@@ -7,3 +7,5 @@ export * from "./officer";
 export * from "./user";
 export * from "./vehicle";
 export * from "./telephonist";
+
+export * from "./service-swap";

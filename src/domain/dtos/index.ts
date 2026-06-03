@@ -7,3 +7,5 @@ export * from "./officer";
 export * from "./user";
 export * from "./vehicle.input.dto";
 export * from "./telephonist";
+
+export * from "./service-swap";

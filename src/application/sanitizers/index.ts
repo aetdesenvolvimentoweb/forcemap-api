@@ -7,3 +7,5 @@ export * from "./officer.input.dto.sanitizer";
 export * from "./user";
 export * from "./vehicle.input.dto.sanitizer";
 export * from "./telephonist.input.dto.sanitizer";
+
+export * from "./service-swap.input.dto.sanitizer";

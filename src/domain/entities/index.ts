@@ -7,3 +7,5 @@ export * from "./session.entity";
 export * from "./telephonist.entity";
 export * from "./user.entity";
 export * from "./vehicle.entity";
+
+export * from "./service-swap.entity";
