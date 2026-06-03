@@ -20,6 +20,9 @@ node_modules/
 .env.production
 .dev.vars
 
+# seed gerado (contém o hash do admin) — transitório, nunca versionar
+drizzle/seed.generated.sql
+
 # logs
 logs/
 *.log

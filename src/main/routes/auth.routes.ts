@@ -8,16 +8,12 @@ import {
   makeRefreshTokenController,
 } from "../factories/controllers";
 import { makeGlobalLogger } from "../factories/logger";
-import {
-  makeHonoAuthMiddleware,
-  makeHonoSeedMiddleware,
-} from "../factories/middlewares";
+import { makeHonoAuthMiddleware } from "../factories/middlewares";
 
 const authRoutes = new Hono();
 
 // Middlewares compostos via factories (Main)
 const { requireAuth } = makeHonoAuthMiddleware();
-const ensureSeedMiddleware = makeHonoSeedMiddleware();
 const logger = makeGlobalLogger();
 
 /**
@@ -28,7 +24,6 @@ const logger = makeGlobalLogger();
 // POST /api/v1/login - Autenticação de usuário
 authRoutes.post(
   "/login",
-  ensureSeedMiddleware,
   honoRouteAdapter(makeLoginController(), logger),
 );
 

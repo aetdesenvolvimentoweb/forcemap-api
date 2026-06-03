@@ -34,7 +34,8 @@
     {
       "binding": "forcemap",
       "database_name": "forcemap",
-      "database_id": "5a7418ae-f02c-470c-8a0b-e5aa62bd7d7b",
+      "database_id": "2b23df24-5639-4350-b4b2-d786ab34b680",
+      "remote": true,
       "migrations_dir": "drizzle",
     },
   ],

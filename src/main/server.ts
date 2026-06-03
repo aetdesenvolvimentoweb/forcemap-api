@@ -7,7 +7,6 @@ import {
   makeHonoCorsMiddleware,
   makeHonoInternalSecretMiddleware,
   makeHonoSecurityLoggingMiddleware,
-  makeHonoSeedMiddleware,
 } from "./factories/middlewares";
 import routes from "./routes";
 
@@ -15,21 +14,17 @@ const app = new Hono();
 
 // Middlewares compostos via factories (Main)
 const securityLoggingMiddleware = makeHonoSecurityLoggingMiddleware();
-const seedMiddleware = makeHonoSeedMiddleware();
 
 // Middleware de banco/ambiente - abre os contextos request-scoped do D1 e das
 // variáveis/secrets (deve rodar antes de qualquer middleware/handler que acesse
-// repositórios ou segredos, incluindo o seed). No Workers, vars e secrets só
-// existem no binding `c.env` da request — nunca em `globalThis`.
+// repositórios ou segredos). No Workers, vars e secrets só existem no binding
+// `c.env` da request — nunca em `globalThis`.
 app.use("*", async (c, next) => {
   const env = (c.env as Record<string, string | undefined>) ?? {};
   return runWithEnv(env, () =>
     runWithDb((c.env as Env).forcemap, () => next()),
   );
 });
-
-// Middleware de seed - inicializa banco de dados se necessário
-app.use("*", seedMiddleware);
 
 // Middleware de segredo interno - roda antes do CORS para fazer bypass quando válido
 app.use("*", async (c, next) => {
