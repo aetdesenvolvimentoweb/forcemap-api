@@ -12,8 +12,10 @@
  * - O SQL gerado contém o hash, então é transitório: escrito com permissão 0600,
  *   aplicado via `--file` (evita o hash em argv/`ps`) e removido num `finally`.
  *   Também está no .gitignore por garantia.
- * - Idempotência via UUIDs fixos + `INSERT OR IGNORE` (conflito de PK vira no-op),
- *   sem depender de constraints únicas extras.
+ * - Idempotência via UUIDs fixos: postos/graduações e o militar admin usam
+ *   `INSERT OR IGNORE` (conflito de PK vira no-op). Já o usuário admin usa
+ *   upsert (`ON CONFLICT(id) DO UPDATE`) na senha, então re-rodar o seed rotaciona
+ *   a senha do admin — é o caminho suportado para resetar o login em produção.
  */
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -77,7 +79,10 @@ async function main(): Promise<void> {
         `INSERT OR IGNORE INTO military_rank (id, abbreviation, "order") VALUES (${sqlStr(r.id)}, ${sqlStr(r.abbreviation)}, ${r.order});`,
     ),
     `INSERT OR IGNORE INTO military (id, military_rank_id, rg, name) VALUES (${sqlStr(ADMIN_MILITARY_ID)}, ${sqlStr(ADMIN_RANK_ID)}, ${ADMIN_RG}, ${sqlStr("Administrador")});`,
-    `INSERT OR IGNORE INTO "user" (id, military_id, role, password) VALUES (${sqlStr(ADMIN_USER_ID)}, ${sqlStr(ADMIN_MILITARY_ID)}, ${sqlStr("Admin")}, ${sqlStr(passwordHash)});`,
+    // Upsert por PK: re-rodar o seed ROTACIONA a senha do admin para o valor de
+    // SEED_ADMIN_PASSWORD (diferente de INSERT OR IGNORE, que ignoraria a colisão
+    // e manteria a senha antiga). Permite resetar a senha do admin em produção.
+    `INSERT INTO "user" (id, military_id, role, password) VALUES (${sqlStr(ADMIN_USER_ID)}, ${sqlStr(ADMIN_MILITARY_ID)}, ${sqlStr("Admin")}, ${sqlStr(passwordHash)}) ON CONFLICT(id) DO UPDATE SET password = excluded.password;`,
   ];
 
   writeFileSync(GENERATED_FILE, statements.join("\n") + "\n", { mode: 0o600 });

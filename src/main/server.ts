@@ -22,7 +22,7 @@ const securityLoggingMiddleware = makeHonoSecurityLoggingMiddleware();
 app.use("*", async (c, next) => {
   const env = (c.env as Record<string, string | undefined>) ?? {};
   return runWithEnv(env, () =>
-    runWithDb((c.env as Env).forcemap, () => next()),
+    runWithDb((c.env as CloudflareBindings).forcemap, () => next()),
   );
 });
 

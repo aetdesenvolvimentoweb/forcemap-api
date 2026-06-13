@@ -1,14 +1,14 @@
-import {
-  DEFAULT_LOGIN_IP_MAX_ATTEMPTS,
-  DEFAULT_LOGIN_USER_MAX_ATTEMPTS,
-  DEFAULT_LOGIN_WINDOW_MS,
-} from "../../../domain/constants";
 import { TooManyRequestsError } from "../../errors";
-import { RateLimiterProtocol, SecurityLoggerProtocol } from "../../protocols";
+import {
+  LoginRateLimitPolicyProvider,
+  RateLimiterProtocol,
+  SecurityLoggerProtocol,
+} from "../../protocols";
 
 interface RateLimitingServiceDependencies {
   rateLimiter: RateLimiterProtocol;
   securityLogger: SecurityLoggerProtocol;
+  policyProvider: LoginRateLimitPolicyProvider;
 }
 
 interface RateLimitKeys {
@@ -36,16 +36,9 @@ export class RateLimitingService {
     ipAddress: string,
     rg: number,
   ): Promise<RateLimitKeys> => {
-    const { rateLimiter, securityLogger } = this.dependencies;
+    const { rateLimiter, securityLogger, policyProvider } = this.dependencies;
 
-    const env = (globalThis as any).process?.env ?? {};
-    const ipMaxAttempts =
-      Number(env.RATE_LIMIT_LOGIN_IP_MAX_ATTEMPTS) ||
-      DEFAULT_LOGIN_IP_MAX_ATTEMPTS;
-    const userMaxAttempts =
-      Number(env.RATE_LIMIT_LOGIN_USER_MAX_ATTEMPTS) ||
-      DEFAULT_LOGIN_USER_MAX_ATTEMPTS;
-    const windowMs = DEFAULT_LOGIN_WINDOW_MS;
+    const { ipMaxAttempts, userMaxAttempts, windowMs } = policyProvider.get();
 
     const ipLimitKey = `login:ip:${ipAddress}`;
     const ipLimit = await rateLimiter.checkLimit(
@@ -96,9 +89,10 @@ export class RateLimitingService {
   public readonly recordFailedAttempt = async (
     keys: RateLimitKeys,
   ): Promise<void> => {
-    const { rateLimiter } = this.dependencies;
-    await rateLimiter.recordAttempt(keys.ipLimitKey, DEFAULT_LOGIN_WINDOW_MS);
-    await rateLimiter.recordAttempt(keys.rgLimitKey, DEFAULT_LOGIN_WINDOW_MS);
+    const { rateLimiter, policyProvider } = this.dependencies;
+    const { windowMs } = policyProvider.get();
+    await rateLimiter.recordAttempt(keys.ipLimitKey, windowMs);
+    await rateLimiter.recordAttempt(keys.rgLimitKey, windowMs);
   };
 
   /**

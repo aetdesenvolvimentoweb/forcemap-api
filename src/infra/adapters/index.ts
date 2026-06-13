@@ -1,5 +1,6 @@
 export * from "./cloudflare-worker-jwt.handler.adapter";
 export * from "./d1.rate-limiter.adapter";
+export * from "./env.login-rate-limit-policy.adapter";
 export * from "./get-client-ip";
 export * from "./hono.route.adapter";
 export * from "./log-level.logger.adapter";

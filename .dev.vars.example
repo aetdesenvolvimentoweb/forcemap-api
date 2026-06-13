@@ -30,3 +30,48 @@ CORS_ALLOWED_ORIGINS_DEV=
 CORS_ALLOW_CREDENTIALS_DEV=
 # Tempo de cache para preflight em desenvolvimento (segundos)
 CORS_MAX_AGE_DEV=
+
+# ──────────────────────────────────────────────────────────────────────────
+# Config NÃO-secreta (já definida em wrangler.jsonc → "vars").
+# Listada aqui só como documentação. Para sobrescrever em DESENVOLVIMENTO,
+# crie a chave (sem o "#") no seu .dev.vars; em produção, ajuste no
+# wrangler.jsonc ou via `wrangler secret put`/Dashboard.
+# ──────────────────────────────────────────────────────────────────────────
+
+# Logging
+# LOG_LEVEL: nível mínimo de log emitido. Valores: debug|info|warn|error|silent.
+#   Default: dev=debug, prod=warn.
+# LOG_PRETTY: true|false. Log legível (true) vs JSON estruturado em uma linha
+#   (false, melhor para consultar logs no Cloudflare). Default: pretty em dev,
+#   JSON em prod quando não definida.
+# LOG_LEVEL=debug
+# LOG_PRETTY=true
+
+# Rate limit de login (proteção anti força-bruta)
+# RATE_LIMIT_LOGIN_IP_MAX_ATTEMPTS: tentativas por IP dentro da janela. Default: 10.
+# RATE_LIMIT_LOGIN_USER_MAX_ATTEMPTS: tentativas por RG dentro da janela. Default: 5.
+# RATE_LIMIT_LOGIN_WINDOW_MINUTES: tamanho da janela, em minutos. Default: 15.
+# RATE_LIMIT_LOGIN_IP_MAX_ATTEMPTS=10
+# RATE_LIMIT_LOGIN_USER_MAX_ATTEMPTS=5
+# RATE_LIMIT_LOGIN_WINDOW_MINUTES=15
+
+# CORS de PRODUÇÃO (só têm efeito quando BUN_ENV != "development")
+# CORS_ALLOWED_ORIGINS_PROD: origens permitidas, separadas por vírgula. SEM
+#   fallback em produção — se vazio, todas as origens são bloqueadas.
+# CORS_ALLOW_NO_ORIGIN_PROD: true|false. Permite requests sem header Origin
+#   (apps mobile/Postman). Default: false.
+# CORS_ALLOW_CREDENTIALS_PROD: true|false. Envia Access-Control-Allow-Credentials.
+#   Default: false.
+# CORS_ALLOWED_METHODS_PROD: métodos HTTP por vírgula.
+#   Default: GET,POST,PUT,DELETE,PATCH.
+# CORS_ALLOWED_HEADERS_PROD: headers aceitos por vírgula.
+#   Default: Content-Type,Authorization,X-Requested-With,Accept.
+# CORS_EXPOSED_HEADERS_PROD: headers expostos por vírgula. Default: vazio.
+# CORS_MAX_AGE_PROD: cache do preflight (OPTIONS), em segundos. Default: 86400.
+# CORS_ALLOWED_ORIGINS_PROD=https://forcemap-web.pages.dev
+# CORS_ALLOW_NO_ORIGIN_PROD=false
+# CORS_ALLOW_CREDENTIALS_PROD=false
+# CORS_ALLOWED_METHODS_PROD=GET,POST,PUT,DELETE,PATCH
+# CORS_ALLOWED_HEADERS_PROD=Content-Type,Authorization,X-Requested-With,Accept
+# CORS_EXPOSED_HEADERS_PROD=
+# CORS_MAX_AGE_PROD=86400

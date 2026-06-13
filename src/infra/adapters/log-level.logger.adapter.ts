@@ -42,39 +42,44 @@ export class LogLevelLoggerAdapter implements LoggerProtocol {
     return PRIORITY[level] >= this.threshold();
   }
 
-  info(message: string, meta?: Record<string, unknown>): void {
-    if (!this.enabled("info")) return;
-    if (meta) {
-      this.logger.info(message, meta);
+  // Formato legível (pretty) vs JSON estruturado em uma linha. Decisão por
+  // chamada, pelo mesmo motivo de threshold(): o env é request-scoped.
+  private pretty(): boolean {
+    const env = getEnv();
+    if (env.LOG_PRETTY !== undefined) return env.LOG_PRETTY === "true";
+    return env.BUN_ENV !== "production"; // default: pretty em dev, JSON em prod
+  }
+
+  private emit(
+    level: Exclude<Level, "silent">,
+    message: string,
+    meta?: Record<string, unknown>,
+  ): void {
+    if (!this.enabled(level)) return;
+    if (this.pretty()) {
+      if (meta) {
+        this.logger[level](message, meta);
+      } else {
+        this.logger[level](message);
+      }
     } else {
-      this.logger.info(message);
+      this.logger[level](JSON.stringify({ level, message, ...(meta ?? {}) }));
     }
+  }
+
+  info(message: string, meta?: Record<string, unknown>): void {
+    this.emit("info", message, meta);
   }
 
   warn(message: string, meta?: Record<string, unknown>): void {
-    if (!this.enabled("warn")) return;
-    if (meta) {
-      this.logger.warn(message, meta);
-    } else {
-      this.logger.warn(message);
-    }
+    this.emit("warn", message, meta);
   }
 
   error(message: string, meta?: Record<string, unknown>): void {
-    if (!this.enabled("error")) return;
-    if (meta) {
-      this.logger.error(message, meta);
-    } else {
-      this.logger.error(message);
-    }
+    this.emit("error", message, meta);
   }
 
   debug(message: string, meta?: Record<string, unknown>): void {
-    if (!this.enabled("debug")) return;
-    if (meta) {
-      this.logger.debug(message, meta);
-    } else {
-      this.logger.debug(message);
-    }
+    this.emit("debug", message, meta);
   }
 }
