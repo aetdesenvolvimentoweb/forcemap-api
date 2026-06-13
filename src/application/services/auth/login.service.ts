@@ -111,9 +111,11 @@ export class LoginService {
         throw error;
       }
 
-      // Record failed attempt for any other error
+      // Erro inesperado (ex.: ConfigurationError de secret ausente, falha de D1).
+      // NÃO mascarar como credencial inválida — registrar a tentativa e propagar
+      // o erro real para que vire 500 com a mensagem verdadeira no observability.
       await rateLimitingService.recordFailedAttempt(rateLimitKeys);
-      throw new UnauthorizedError("Erro no processo de autenticação");
+      throw error;
     }
   };
 
