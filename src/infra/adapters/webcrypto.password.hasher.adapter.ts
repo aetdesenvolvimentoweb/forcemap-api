@@ -6,8 +6,12 @@ const webcrypto = crypto;
 const LEGACY_ITERATIONS = 100000;
 
 export class WebCryptoPasswordHasherAdapter implements PasswordHasherProtocol {
-  // OWASP recomenda >= 600k iterações para PBKDF2-SHA256.
-  constructor(private readonly iterations: number = 600000) {}
+  // O runtime do Cloudflare Workers limita o PBKDF2 do WebCrypto a no máximo
+  // 100.000 iterações (acima disso lança NotSupportedError). O OWASP recomenda
+  // mais, mas o teto do Workers é o limite efetivo aqui — e a verificação do
+  // login roda no Workers. O seed precisa usar o mesmo valor para que o hash
+  // gravado seja verificável (re-rodar o seed regenera o hash do admin).
+  constructor(private readonly iterations: number = 100000) {}
 
   private async deriveHash(
     plainPassword: string,

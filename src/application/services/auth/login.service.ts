@@ -19,7 +19,7 @@ import { SessionManagementService } from "./session-management.service";
  * mitigando enumeração de usuário por timing. As iterações casam com o custo
  * padrão do hasher; o valor nunca confere com nenhuma senha real.
  */
-const DUMMY_HASH = `600000:${btoa("\0".repeat(16))}:${btoa("\0".repeat(32))}`;
+const DUMMY_HASH = `100000:${btoa("\0".repeat(16))}:${btoa("\0".repeat(32))}`;
 
 interface LoginServiceDependencies {
   userRepository: UserRepository;
