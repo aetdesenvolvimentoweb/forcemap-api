@@ -1,5 +1,5 @@
 {
-  "name": "forcemap",
+  "name": "forcemap-api",
   "type": "module",
   "scripts": {
     "dev": "BUN_ENV=development wrangler dev",
