@@ -1,14 +1,17 @@
 {
   "name": "forcemap-api",
   "type": "module",
+  "config": {
+    "db": "forcemap"
+  },
   "scripts": {
     "dev": "BUN_ENV=development wrangler dev",
     "start": "BUN_ENV=production bun run src/start.ts",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply forcemap --local",
-    "db:migrate:remote": "wrangler d1 migrations apply forcemap --remote",
+    "db:migrate:local": "wrangler d1 migrations apply $npm_package_config_db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply $npm_package_config_db --remote",
     "db:seed:local": "bun run scripts/seed.ts --local",
     "db:seed:remote": "bun run scripts/seed.ts --remote",
     "db:studio": "drizzle-kit studio"

@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { securityHeadersDev, securityHeadersProd } from "../infra/adapters";
 import { runWithEnv } from "../infra/config";
 import { runWithDb } from "../infra/db";
+import { DB_BINDING } from "../infra/db/config";
 import {
   makeHonoCorsMiddleware,
   makeHonoInternalSecretMiddleware,
@@ -22,7 +23,7 @@ const securityLoggingMiddleware = makeHonoSecurityLoggingMiddleware();
 app.use("*", async (c, next) => {
   const env = (c.env as Record<string, string | undefined>) ?? {};
   return runWithEnv(env, () =>
-    runWithDb((c.env as CloudflareBindings).forcemap, () => next()),
+    runWithDb((c.env as CloudflareBindings)[DB_BINDING] as D1Database, () => next()),
   );
 });
 

@@ -23,7 +23,10 @@ import { unlinkSync, writeFileSync } from "node:fs";
 
 import { WebCryptoPasswordHasherAdapter } from "../src/infra/adapters/webcrypto.password.hasher.adapter";
 
-const DB_NAME = "forcemap";
+import pkg from "../package.json" with { type: "json" };
+const DB_NAME: string =
+  (pkg as { config?: { db?: string } }).config?.db ??
+  (() => { throw new Error("config.db não definido em package.json"); })();
 const GENERATED_FILE = "drizzle/seed.generated.sql";
 const ADMIN_RG = 9999;
 
